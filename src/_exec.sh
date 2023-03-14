@@ -21,10 +21,35 @@ else
 	exit 1
 fi
 
+cat > /etc/systemd/system/sys-background-manager.service <<EOF
+[Unit]
+Description=Random wallpaper changer
+After=network-online.target
+
+[Service]
+Type=simple
+User=$(whoami)
+ExecStart=/bin/bash /usr/local/bin/sys-background-manager.sh
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 # run in background
-nohup bash -c "\
-	while true; do \
-		FILE=\$(ls $_path/* | shuf -n1); \
-		gsettings set org.gnome.desktop.background picture-uri \"file://\$FILE\"; \
-		sleep $tim; \
-	done" > "$LOG_FILE" 2>&1 &
+cat > /usr/local/bin/sys-background-manager.sh <<EOF
+#!/bin/bash
+
+while true; do
+    FILE=\$(ls $_path/* | shuf -n1)
+    gsettings set org.gnome.desktop.background picture-uri "file://\$FILE"
+    sleep $tim
+done
+EOF
+
+chmod +x /usr/local/bin/sys-background-manager.sh
+systemctl daemon-reload
+
+echo "Wallpaper changer service created successfully."
+echo "To start the service, run 'systemctl start wallpaper'"

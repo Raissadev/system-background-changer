@@ -10,7 +10,7 @@ Simple image changer
 run
 ```
 $ chmod +x ./start.sh
-$ ./start.sh
+$ ./in.sh
 ```
 ## Author
 Raissa Daros - raissa.geek@gmail.com - https://github.com/Raissadev
